@@ -61,7 +61,6 @@ const double pi = 3.14159265358979;
         0.000000000000001   // arctan(1/2^50)
     };
 
-    
 
 void add()
 {
@@ -107,7 +106,34 @@ double sqrt (double a){
     }
     return s;
 }
-
+void gint(){
+    cout<<"enter the number: ";
+    int num; cin>>num;
+    cout<<num<<endl;
+}
+void lint(){
+    cout<<"enter the number: ";
+    double num;cin>>num;
+    int y = num;
+    if(num == y){
+        cout<<y<<endl;
+    }
+    else{
+        cout<<y+1<<endl;
+    }
+}
+void fart(){
+    cout<<"enter the number: "<<endl;
+    double num; cin>>num;
+    int y = num;
+    cout<<(num-y)<<endl;
+}
+void absolute_value(){
+    cout<<"enter the number: ";
+    double number;cin>>number;
+    if(number < 0){cout<<-number<<endl;}
+    else{cout<<number<<endl;}
+}
 void solvequad()//asks for coeffecients ofquadrtic equation and prints its roots 
 {
     double a,b,c;
@@ -130,10 +156,12 @@ void solvequad()//asks for coeffecients ofquadrtic equation and prints its roots
     else//if discriminant is negative then roots are non real complex. currently these are not supported.
     {cout<<"the roots are non real complex";}
 }
-double ln(double z = 0, bool mode = 1){
-    if(mode){
-    cout<<"enter the number: ";
-    double z; cin>>z;}
+double ln(double z = 1){
+    
+    if(z == 1){
+        cout<<"enter the number: ";
+        cin>>z;
+    }
     double divisions = 0;
     while (z > 1)
     {
@@ -142,7 +170,7 @@ double ln(double z = 0, bool mode = 1){
     }
     while (z < 0.5)
     {
-        z*= 2; 
+        z *= 2; 
         divisions --;
     }
     //to calculate log by taylor series, we use ln (1 - x) thus, the ln(z) = ln(1-(1-z))
@@ -155,18 +183,33 @@ double ln(double z = 0, bool mode = 1){
         term *= z*(i-1)/(i);
         sum += term;
     }
-    if(mode){cout<<setprecision(15)<<divisions*ln2-sum<<endl;}
-    else{return divisions*ln2-sum;}
+   return divisions*ln2-sum;
 }
-double exp(double x){
+void logarithm(double base = 0){
+    if(base == 0){
+        cout<<"\nenter the base: ";
+        cin>>base;
+    }
+    cout<<"enter the argument";
+    double argument;cin>>argument;
+    cout<<"logarithm of "<<argument<<" to base :"<<base<<" is: "<<(ln(argument)/ln(base))<<endl;
+}
+double exp(double x = 0, bool promptuser = false){
+    if(promptuser){
+        cout<<"the base has been set to e. please enter the exponent: ";
+        cin>>x;
+    }
     int y = x;
     double out = raiseto(e,y);
-    double z = x-y;
-    double term = 1,sum = 1;
-    for(int i = 1; i < 50; i++){
-        term *= (z/i);
-        sum += term;
+    double z = x-y, sum = 1;
+    if(z != 0){
+        double term = 1;
+        for(int i = 1; i < 50; i++){
+            term *= (z/i);
+            sum += term;
+        }
     }
+    if(promptuser){cout<<"e to the power "<<setprecision(15)<<x<<" is: "<<setprecision(15)<<(out*sum);}
     return out*sum;
 }
 void anyexp(){
@@ -174,7 +217,7 @@ void anyexp(){
     double base; cin >> base;
     cout<<"\nenter exponent: ";
     double exponent; cin>>exponent;
-    cout<<exp(exponent*ln(base,false));
+    cout<<exp(exponent*ln(base), false);
 }
 double determinant(vector<vector<double>> matrix)
 {
@@ -286,24 +329,26 @@ void entervalues() {
     }
 }
 void CORDICR(double& x, double& y,double& z, double refarr[],int size)
-/*runs CORDIC algorithm in ROTATION MODE. reference: https://people.clas.ufl.edu/bruceedwards/files/paper1.pdf */
 {
-    
-    for(int i = 0; i < size; i++){
-        double a = x,b = y;
-        if (z < 0) {
-            x = a + (b / (1 << i));
-            y = b - (a / (1 << i));
-            z += refarr[i];
-            }
-         else {
-            x = a - (b / (1 << i));
-            y= b + (a / (1 << i));
-            z -= refarr[i];
-        }
-    }
+    long long int m = 1;
     x *= prdctcvalues;
     y *= prdctcvalues;
+    for(int i = 0; i < size; i++){
+        double a = x,b = y;
+        long long int m = 1;
+        if (z < 0) {
+            x = a + (b / (m << i));
+            y = b - (a / (m << i));
+            z += refarr[i];
+        }
+         else {
+             x = a - (b /(m << i));
+            y = b + (a /(m << i));
+            z -= refarr[i];
+        }
+        cout<<i << " "<< x<< " "<< y<<" "<<z<<"\n";
+        }  
+    
 }
 void trig(string mode){
     cout<< "\nenter the angle in degrees: ";
@@ -367,17 +412,18 @@ inverse hyperboic functions. it is essentially based on rotating a unit vector h
 till it becomes parallel to x axis.*/
 {
     x *= prdctcvalues;//scaling down
-    y *= prdctcvalues;    
+    y *= prdctcvalues;
+    long long int m = 1;    
     for(int i = 0; i < size; i++){
         double a = x,b = y;
         if (y > 0) {//we try to push ytowards 0 byrotation
-            x = a + (b / (1 << i));
-            y = b - (a / (1 << i));//if y is positive, rotate so as to decrease it.
+            x = a + (b / (m << i));
+            y = b - (a / (m << i));//if y is positive, rotate so as to decrease it.
             z += refarr[i];//as this rotation is clockwise, the angle will decrease
         }
          else{
-            x = a - (b / (1 << i));
-            y = b + (a / (1 << i));//if y is negative, rotate so as to increase it..
+            x = a - (b / (m << i));
+            y = b + (a / (m << i));//if y is negative, rotate so as to increase it..
             z -= refarr[i];//as the rotation is anticlockwise, the angle will increase..
         }
     }
@@ -390,38 +436,38 @@ void trig1(string mode){
     if (mode == "arcsin")
     {
         y = value; x = sqrt(1 - y*y);
-        if (y >= 0){CORDICV(x,y,z,arctanvalues,29);cout<<"arcsin of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<<z;}
-        else{y *= -1;CORDICV(x,y,z,arctanvalues,29);cout<<"arcsin of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< -z;}
+        if (y >= 0){CORDICV(x,y,z,arctanvalues,29);cout<<"arcsin of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<<z;}
+        else{y *= -1;CORDICV(x,y,z,arctanvalues,29);cout<<"arcsin of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< -z;}
     }
     else if (mode == "arccos")
     {
         x = value; y = sqrt(1 - x*x);
-        if (x >= 0){CORDICV(x,y,z,arctanvalues,29);cout<<"arccos of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< z;}
-        else{x *= -1;CORDICV(x,y,z,arctanvalues,29);cout<<"arccos of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< (pi - z);}
+        if (x >= 0){CORDICV(x,y,z,arctanvalues,29);cout<<"arccos of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< z;}
+        else{x *= -1;CORDICV(x,y,z,arctanvalues,29);cout<<"arccos of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< (pi - z);}
     }
     else if (mode == "arctan")
     {
         x = sqrt(1/(1+ value*value)); y = sqrt(1 - x*x);
         CORDICV(x,y,z,arctanvalues,29);
-        if(value >= 0){cout<<"arctan of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< z;}else {cout<<"arctan of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< -z;}
+        if(value >= 0){cout<<"arctan of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< z;}else {cout<<"arctan of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< -z;}
     }
     else if (mode == "arccot")
     {
         y = sqrt(1/(1+ value*value)); x = sqrt(1 - y*y);
         CORDICV(x,y,z,arctanvalues,29);
-        if(value >= 0){cout<<"arccot of "<<setprecision(15)<<value<<"is: " << z;} else {cout<<"arccot of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< (pi-z);}
+        if(value >= 0){cout<<"arccot of "<<setprecision(15)<<value<<" is: " << z;} else {cout<<"arccot of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< (pi-z);}
     }
     else if (mode == "arcsec")
     {
         x = 1/value; y = sqrt(1 - x*x);
-        if (x > 0){CORDICV(x,y,z,arctanvalues,29);cout<<"arccot of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< z;}
-        else{x *= -1;CORDICV(x,y,z,arctanvalues,29);cout<<"arccot of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< (pi - z);}
+        if (x > 0){CORDICV(x,y,z,arctanvalues,29);cout<<"arccot of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< z;}
+        else{x *= -1;CORDICV(x,y,z,arctanvalues,29);cout<<"arccot of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< (pi - z);}
     }
     else if (mode == "arccosec")
     {
         y = 1/value; x = sqrt(1 - y*y);
-        if (y > 0){CORDICV(x,y,z,arctanvalues,29);cout<<"arccot of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< (z);}
-        else{y *= -1;CORDICV(x,y,z,arctanvalues,29);cout<<"arccot of "<<setprecision(15)<<value<<"is: " <<setprecision(15)<< (z*-1);}
+        if (y > 0){CORDICV(x,y,z,arctanvalues,29);cout<<"arccot of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< (z);}
+        else{y *= -1;CORDICV(x,y,z,arctanvalues,29);cout<<"arccot of "<<setprecision(15)<<value<<" is: " <<setprecision(15)<< (z*-1);}
     }    
 }
 
@@ -437,13 +483,17 @@ int main()
         else if (input == "multiply"){multiply();}
         else if (input == "divide"){divide();}
         else if (input == "raiseto"){anyexp();}
+        else if (input == "gint"){gint();}
+        else if (input == "lint"){lint();}
+        else if (input == "fart"){fart();}
+        else if (input == "abs"){absolute_value();}
         else if (input == "sin"){trig("sin");}
         else if (input == "cos"){trig("cos");}
-        else if (input == "exp"){cout<<exp(5.6);}
         else if (input == "tan"){trig("tan");}
         else if (input == "cot"){trig("cot");}
         else if (input == "sec"){trig("sec");}
         else if (input == "cosec"){trig("cosec");}
+        else if (input == "exp"){exp(0,true);}
         else if (input == "quadratic"){solvequad();}
         else if (input == "arcsin"){trig1("arcsin");}
         else if (input == "arccos"){trig1("arccos");}
@@ -451,19 +501,37 @@ int main()
         else if (input == "arccot"){trig1("arccot");}
         else if (input == "arcsec"){trig1("arcsec");}
         else if (input == "arccosec"){trig1("arccosec");}
+        else if (input == "ln"){logarithm(e);}
+        else if (input == "lg"){logarithm(10);}
+        else if (input == "logarithm"){logarithm();}
         else if (input == "solvelinear"){entervalues();}
         else if (input == "over"){break;}
         else if (input == "listout"){
-            cout<<"add             "<<"adds two numbers                               ";cout<<"subtract        "<<"subtract two numbers"<<endl;
-            cout<<"multiply        "<<"multiply two numbers                           ";cout<<"divide          "<<"divide a number by other"<<endl;
-            cout<<"raiseto         "<<"raises a base(double) to an integer power      ";cout<<"quadratic       "<<"gives root of quadratic"<<endl;
-            cout<<"sin             "<<"calculates sin of given number                 ";cout<<"cos             "<<"calculates cos of given number"<<endl;
-            cout<<"tan             "<<"calculates tan of given number                 ";cout<<"cot             "<<"calculates cot of given number"<<endl;
-            cout<<"sec             "<<"calculates sec of given number                 ";cout<<"cosec           "<<"calculates cisec of given number"<<endl;
-            cout<<"arcsin          "<<"calculates arcsin of given number              ";cout<<"arccos          "<<"calculates arccos of given number"<<endl;
-            cout<<"arctan          "<<"calculates arctan of given number              ";cout<<"arccot          "<<"calculates arccot of give n number"<<endl;
-            cout<<"arcsec          "<<"calculates arcsec of given number              ";cout<<"arccosec        "<<"calculates arccosec of given number"<<endl;
-            cout<<"solvelinear     "<<"solves a system of linear equations            ";cout<<"over            "<<"ends the program"<<endl;
+            cout<<"add             "<<"adds two numbers\n";
+            cout<<"subtract        "<<"subtract two numbers"<<endl;
+            cout<<"multiply        "<<"multiply two numbers\n";
+            cout<<"divide          "<<"divide a number by other"<<endl;
+            cout<<"gint            "<<"calculates greatest integer of given number\n";
+            cout<<"lint            "<<"calculates least integer of given number\n";
+            cout<<"raiseto         "<<"raises a base(double) to ANY (double) power\n";
+            cout<<"quadratic       "<<"gives root of quadratic"<<endl;
+            cout<<"sin             "<<"calculates sin of given number\n";
+            cout<<"cos             "<<"calculates cos of given number"<<endl;
+            cout<<"tan             "<<"calculates tan of given number\n";
+            cout<<"cot             "<<"calculates cot of given number"<<endl;
+            cout<<"sec             "<<"calculates sec of given number\n ";
+            cout<<"cosec           "<<"calculates cisec of given number"<<endl;
+            cout<<"arcsin          "<<"calculates arcsin of given number\n";
+            cout<<"arccos          "<<"calculates arccos of given number"<<endl;
+            cout<<"arctan          "<<"calculates arctan of given number\n";
+            cout<<"arccot          "<<"calculates arccot of give n number"<<endl;
+            cout<<"arcsec          "<<"calculates arcsec of given number\n";
+            cout<<"ln              "<<"calculates natural logarithm\n";
+            cout<<"lg              "<<"calculates common logarithm\n";
+            cout<<"logarithm       "<<"calculates logarithm of any base\n";
+            cout<<"arccosec        "<<"calculates arccosec of given number"<<endl;
+            cout<<"solvelinear     "<<"solves a system of linear equations\n";
+            cout<<"over            "<<"ends the program"<<endl;
         }
         else{cout<<"your command did not match any of our operations.\nPlease try again";}
     }
